@@ -1,0 +1,73 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct process {
+    int id;
+    int size;
+};
+
+int main() {
+    int total_memory, num_processes;
+    cout << "Enter the total memory available (in Bytes) ::>> ";
+    cin >> total_memory;
+    cout << "Enter the number of processes ::>> ";
+    cin >> num_processes;
+    
+    vector<process> processes;
+    int total_allocated = 0;
+    for (int i = 1; i <= num_processes; i++) {
+        int size;
+        cout << "Enter memory required for process " << i << " (in Bytes) ::>> ";
+        cin >> size;
+        processes.push_back({i, size});
+    }
+    
+    cout << "\nPROCESS | MEMORY REQUIRED" << endl;
+    vector<process>allocated_processes;
+    for (int i = 0; i < num_processes; i++) {
+        if (total_allocated + processes[i].size <= total_memory) {
+            allocated_processes.push_back(processes[i]);
+            total_allocated += processes[i].size;
+            cout << processes[i].id << "\t| " << processes[i].size << endl;
+        } else {
+            cout << endl << "Memory is Full, Remaining Processes cannot be accommodated" << endl;
+            cout << endl << "Total Memory Allocated is " << total_allocated << endl;
+            cout << "Total External Fragmentation is " << total_memory - total_allocated << endl;
+            cout << endl << "<<Press Enter to continue with the next batch of processes>>" << endl;
+            cin.ignore();
+            cin.get();
+            break;
+        }
+    }
+   vector<process> remaining_processes;
+    for (int i = allocated_processes.size(); i < num_processes; i++) {
+        remaining_processes.push_back(processes[i]);
+    }
+    
+    if (remaining_processes.size() > 0) {
+        cout << endl << "PROCESS | MEMORY REQUIRED" << endl;
+        for (int i = 0; i < remaining_processes.size(); i++) {
+            cout << remaining_processes[i].id << "\t|\t" << remaining_processes[i].size << endl;
+        }
+        
+        vector<process> allocated_processes_2;
+        int total_allocated_2 = 0;
+        for (int i = 0; i < remaining_processes.size(); i++) {
+            if (total_allocated_2 + remaining_processes[i].size <= total_memory - total_allocated) {
+                allocated_processes_2.push_back(remaining_processes[i]);
+                total_allocated_2 += remaining_processes[i].size;
+            } else {
+                break;
+            }
+        }
+        
+        cout << endl << "No other Processes Remaining in the Ready Queue." << endl;
+        cout << "Total Memory Allocated is " << total_allocated + total_allocated_2 << endl;
+        cout << "Total External Fragmentation is " << total_memory - total_allocated - total_allocated_2 << endl;
+    }
+    
+    return 0;
+}
