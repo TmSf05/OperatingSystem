@@ -1,0 +1,112 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+struct Process {
+    int id;
+    int size;
+    bool allocated;
+    int internal_fragmentation;
+};
+
+int main() {
+    int total_memory, block_size, num_processes;
+    cout << "Enter the total memory available (in Bytes) ::>> ";
+    cin >> total_memory;
+    cout << "Enter the block size (in Bytes) ::>> ";
+    cin >> block_size;
+    
+    int num_blocks = total_memory / block_size;
+    int* blockList = new int[num_blocks];
+    for (int i = 0; i<num_blocks; i++)
+    blockList[i] = -1;
+    
+    cout << "Enter the number of processes ::>> ";
+    cin >> num_processes;
+    
+    vector<Process> processes(num_processes);
+    int total_internal_fragmentation = 0;
+    int total_external_fragmentation = 0;
+    int allocatedBlocks = 0;
+ 
+    for (int i = 0; i < num_processes; i++) {
+        cout << "Enter memory required for process " << i+1 << " (in Bytes) ::>> ";
+        cin >> processes[i].size;
+        processes[i].id = i+1;
+        processes[i].allocated = false;
+        processes[i].internal_fragmentation = 0;
+        bool allocated = false;
+       
+        for (int j = 0; j < num_blocks; j++) {                       
+            if (!allocated && blockList[j] == -1 && processes[i].size <= block_size) {
+                allocated = true;
+                processes[i].allocated = true;
+                blockList[j] = 1;
+                allocatedBlocks++;
+                processes[i].internal_fragmentation = block_size - processes[i].size;
+                total_internal_fragmentation += processes[i].internal_fragmentation;
+            }
+            else {
+                total_external_fragmentation = total_memory - num_blocks * block_size;
+            }
+        }
+    }
+    cout << "Number of Blocks available in memory is " << num_blocks << "." << endl;
+    cout << "\nPROCESS MEMORY REQUIRED ALLOCATED INTERNAL FRAGMENTATION" << endl;
+    
+    for (int i = 0; i < num_processes; i++) {
+        cout << processes[i].id << "\t" << processes[i].size << "\t";
+        if (processes[i].allocated) {
+            cout << "YES\t\t\t" << processes[i].internal_fragmentation << endl;
+        }
+        else {
+            cout << "NO\t\t\t-----" << endl;
+        }
+    }
+    cout << "\nMemory is Full, Remaining Processes cannot be accommodated" << endl;
+    cout << "\nTotal Internal Fragmentation is " << total_internal_fragmentation << endl;
+    cout << "Total External Fragmentation is " << total_external_fragmentation << endl;
+    cout << "\n<<Press Enter to continue with the next batch of processes>>";
+    cin.ignore();
+    cin.get();
+    total_internal_fragmentation = 0;
+    total_external_fragmentation = 0;
+    cout << "\nPROCESS MEMORY REQUIRED ALLOCATED INTERNAL FRAGMENTATION" << endl;
+    
+    for (int i = 3; i < num_processes; i++) {
+        if (processes[i].allocated) {
+            continue;
+        }
+        cout << processes[i].id << "\t" << processes[i].size << "\t";
+        bool allocated = false;
+        
+        for (int j = 0; j < num_processes; j++) {
+            if (!allocated && processes[i].size <= block_size) {
+                allocated = true;
+                processes[i].allocated = true;
+                processes[i].internal_fragmentation = block_size - processes[i].size;
+                total_internal_fragmentation += processes[i].internal_fragmentation;
+            }
+            else {
+                total_external_fragmentation = total_memory - total_internal_fragmentation;
+            }
+        }
+        if (processes[i].allocated) {
+            cout << "YES\t\t\t" << processes[i].internal_fragmentation << endl;
+        }
+        else {
+            cout << "NO\t\t\t-----" << endl;
+        }
+    }
+    
+    for (int i = 0; i < num_blocks; i++) {
+        if (!processes[i].allocated) {
+            cout << "\nPROCESS " << processes[i].id << " CANNOT BE ACCOMMODATED." << endl;
+            total_external_fragmentation = total_memory - total_internal_fragmentation;
+        }
+    }
+    cout << "\nTotal Internal Fragmentation is " << total_internal_fragmentation << endl;
+    cout << "Total External Fragmentation is " << total_external_fragmentation << endl;
+    return 0;
+}
