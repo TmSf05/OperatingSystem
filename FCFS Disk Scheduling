@@ -1,0 +1,27 @@
+def first_come_first_serve(requests, head):
+    total_head_movement = 0
+    tracks_traversed = []
+    current_head = head
+    
+    for track in requests:
+        tracks_traversed.append(track)
+        total_head_movement += abs(track - current_head)
+        current_head = track
+    
+    return tracks_traversed, total_head_movement, total_head_movement / len(tracks_traversed)
+
+if __name__ == '__main__':
+    num_requests = int(input("Enter number of I/O Request: "))
+    tracks = list(map(int, input("Tracks are between 0 – 199\nEnter track positions: ").split()))
+    head = int(input("Enter head location: "))
+
+    tracks_traversed, total_head_movement, avg_head_movement = first_come_first_serve(tracks, head)
+
+    print("\nTracks traversed | Difference between tracks")
+    for track in tracks_traversed:
+        diff = abs(head - track)
+        print(f"{track}\t\t | {diff}")
+        head = track
+
+    print("\nTotal Head Movement:", total_head_movement)
+    print("Average Header Movement:", avg_head_movement)
