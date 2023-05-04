@@ -1,27 +1,33 @@
-def first_come_first_serve(requests, head):
-    total_head_movement = 0
-    tracks_traversed = []
-    current_head = head
-    
-    for track in requests:
-        tracks_traversed.append(track)
-        total_head_movement += abs(track - current_head)
-        current_head = track
-    
-    return tracks_traversed, total_head_movement, total_head_movement / len(tracks_traversed)
+#include<iostream>
+#include<cstdlib>
+using namespace std;
 
-if __name__ == '__main__':
-    num_requests = int(input("Enter number of I/O Request: "))
-    tracks = list(map(int, input("Tracks are between 0 – 199\nEnter track positions: ").split()))
-    head = int(input("Enter head location: "))
+int main()
+{
+    int n, head, prev_track, total_seek_time = 0;
+    cout<<"Enter number of I/O Request: ";
+    cin>>n;
+    int queue[n];
+    cout<<"Tracks are between 0 - 199"<<endl;
+    cout<<"Enter track positions: ";
+    for(int i = 0; i < n; i++)
+    {
+        cin>>queue[i];
+    }
+    cout<<"Enter head location: ";
+    cin>>head;
+    cout<<"\nTracks traversed | Difference between tracks"<<endl;
+    prev_track = head;
+    for(int i = 0; i < n; i++)
+    {
+        int diff = abs(queue[i] - prev_track);
+        total_seek_time += diff;
+        cout<<queue[i]<<"\t\t|\t"<<diff<<endl;
+        prev_track = queue[i];
+    }
 
-    tracks_traversed, total_head_movement, avg_head_movement = first_come_first_serve(tracks, head)
+    cout<<"\nTotal Head Movement: "<<total_seek_time<<endl;
+    cout<<"Average Header Movement: "<<(float)total_seek_time/n<<endl;
 
-    print("\nTracks traversed | Difference between tracks")
-    for track in tracks_traversed:
-        diff = abs(head - track)
-        print(f"{track}\t\t | {diff}")
-        head = track
-
-    print("\nTotal Head Movement:", total_head_movement)
-    print("Average Header Movement:", avg_head_movement)
+    return 0;
+}
