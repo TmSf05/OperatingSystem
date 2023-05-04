@@ -1,0 +1,88 @@
+#include <iostream>
+
+using namespace std;
+
+const int BUFFER_SIZE = 10;
+int buffer[BUFFER_SIZE];
+bool flag[2] = {false, false};
+int turn = 0;
+int in = 0;
+int out = 0;
+int count = 0;
+
+void producer() {
+    int val;
+    cout << "Enter the value: ";
+    cin >> val;
+
+        flag[0] = true;
+        turn = 1;
+        
+        // wait for the consumer
+        while (flag[1] && turn == 1);
+
+        // critical section
+        if (count != BUFFER_SIZE) {
+            buffer[in] = val;
+            cout << "Produced " << val << endl;
+
+            in = (in + 1) % BUFFER_SIZE;
+            count++;
+        } else {
+            cout << "Buffer is full!" << endl;
+        }
+
+        flag[0] = false;
+        // remainder section
+
+}
+
+void consumer() {
+ 
+        flag[1] = true;
+        turn = 0;
+        
+        //wait for the producer
+        while (flag[0] && turn == 0);
+
+        // critical section
+        if (count != 0) {
+            cout << "The consumed value is " << buffer[out] << endl;
+            buffer[out] = 0;
+
+            out = (out + 1) % BUFFER_SIZE;
+            count--;
+        } else {
+            cout << "Buffer is empty" << endl;
+        }
+
+        flag[1] = false;
+        // remainder section
+
+}
+
+int main() {
+    int choice;
+
+    while (true) {
+        cout << "1. Produce 2. Consume 3. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                producer();
+                break;
+            case 2:
+                consumer();
+                break;
+            case 3:
+                return 0;
+            default:
+                cout << "Invalid choice" << endl;
+                break;
+        }
+    }
+
+    return 0;
+}
