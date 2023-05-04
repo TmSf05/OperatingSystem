@@ -1,0 +1,85 @@
+print("\n FIRST COME FIRST SERVE SCHEDULING")
+print("================================================================")
+
+# QUERY
+n = int(input("Enter number  of processes: "))
+d = dict()
+
+# To Input the arrival time and burst time process
+for i in range(n):
+    key = "P" + str(i+1)
+    a = int(input("\nArrival Time of process" + str(i + 1) + ": "))
+    b = int(input("Burst Time of process" + str(i + 1) + ": "))
+    l = []
+    l.append(a)
+    l.append(b)
+    d[key] = l
+
+d = sorted(d.items(), key=lambda item: item[1][0])
+
+# To get or the computation
+# Complete Time
+CT = []
+for i in range(len(d)):
+    # First process
+    if(i==0):
+        CT.append(d[i][1][1])
+    # Get prevCT + newBT
+    else:
+        CT.append(CT[i-1]+d[i][1][1])
+
+# Turn Around
+TAT = []
+for i in range(len(d)):
+    TAT.append(CT[i]-d[i][1][0])
+    # TAT = CT-AT
+
+# Waiting Time
+WT = []
+for i in range(len(d)):
+    WT.append(TAT[i]-d[i][1][1])
+    # WT = TAT-BT
+
+# Average Waiting Time
+avg_WT = 0
+for i in WT:
+    avg_WT += i
+avg_WT = (avg_WT/n)
+
+# Average Turn Around Time
+avg_TAT = 0
+for i in TAT:
+    avg_TAT += i
+avg_TAT = (avg_TAT/n)
+
+# Display
+
+# Gantt Chart
+print("\nGantt Chart: \n================================================================")
+gantt_chart = ""
+
+# Processes and BT
+for i in range(n):
+    gantt_chart += f"{(d[i][0])}={(d[i][1][1])} "
+gantt_chart += "\n"
+
+# Processes in index
+for i in range(n):
+    gantt_chart += f"| {(d[i][0])} "
+gantt_chart += " |\n0   "
+
+# show the CT in line
+for i in range(n):
+    gantt_chart += f" {(CT[i])}   "
+print(gantt_chart)
+
+# Table
+print("\nTable: \n================================================================")
+print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("Processes", "AT", "BT", "CT", "TAT", "WT"))
+for i in range(n):
+    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format(d[i][0], d[i][1][0], d[i][1][1], CT[i], TAT[i], WT[i]))
+
+# Average
+print("================================================================")
+print("\nAverage Waiting Time: ", avg_WT)
+print("Average Turn Around Time: ", avg_TAT)
