@@ -1,0 +1,39 @@
+import math
+
+def shortest_seek_time_first(requests, head):
+    total_head_movement = 0
+    tracks_traversed = []
+    current_head = head
+    
+    while len(requests) > 0:
+        min_distance = math.inf
+        next_track = None
+        
+        for track in requests:
+            distance = abs(track - current_head)
+            if distance < min_distance:
+                min_distance = distance
+                next_track = track
+        
+        tracks_traversed.append(next_track)
+        total_head_movement += min_distance
+        current_head = next_track
+        requests.remove(next_track)
+    
+    return tracks_traversed, total_head_movement, total_head_movement / len(tracks_traversed)
+
+if __name__ == '__main__':
+    num_requests = int(input("Enter number of I/O Request: "))
+    tracks = list(map(int, input("Tracks are between 0 – 199\nEnter track positions: ").split()))
+    head = int(input("Enter head location: "))
+
+    tracks_traversed, total_head_movement, avg_head_movement = shortest_seek_time_first(tracks, head)
+
+    print("\nTracks traversed | Difference between tracks")
+    for track in tracks_traversed:
+        diff = abs(head - track)
+        print(f"{track}\t\t | {diff}")
+        head = track
+
+    print("\nTotal Head Movement:", total_head_movement)
+    print("Average Header Movement:", avg_head_movement)
